@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Atom Test</title>
+<entry><title>Agents need fewer tools</title><link href="https://blog.example.org/agents"/>
+<updated>2026-11-15T12:00:00Z</updated><author><name>Jane Writer</name></author>
+<summary>Tool count and agent reliability.</summary></entry>
+</feed>

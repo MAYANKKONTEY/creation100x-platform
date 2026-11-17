@@ -1,0 +1,20 @@
+# Discovery sources. Each URL returned HTTP 200 when checked on 2026-11-17.
+# kind: rss (RSS/Atom) | hn_algolia (Hacker News Algolia search API)
+# category: A ai_tech | B business | C business_problems | D startup_opportunities | E linkedin_content
+sources:
+  - {name: OpenAI News, kind: rss, url: "https://openai.com/news/rss.xml", category: A}
+  - {name: Google DeepMind Blog, kind: rss, url: "https://deepmind.google/blog/rss.xml", category: A}
+  - {name: Hugging Face Blog, kind: rss, url: "https://huggingface.co/blog/feed.xml", category: A}
+  - {name: GitHub Blog, kind: rss, url: "https://github.blog/feed/", category: A}
+  - {name: Simon Willison, kind: rss, url: "https://simonwillison.net/atom/everything/", category: A}
+  - {name: arXiv cs.AI, kind: rss, url: "https://export.arxiv.org/rss/cs.AI", category: A, max_items: 25}
+  - {name: arXiv cs.CL, kind: rss, url: "https://export.arxiv.org/rss/cs.CL", category: A, max_items: 25}
+  - {name: The Verge AI, kind: rss, url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", category: A}
+  - {name: Ars Technica Tech Lab, kind: rss, url: "https://feeds.arstechnica.com/arstechnica/technology-lab", category: A}
+  - {name: TechCrunch, kind: rss, url: "https://techcrunch.com/feed/", category: B}
+  - {name: Crunchbase News, kind: rss, url: "https://news.crunchbase.com/feed/", category: B}
+  - {name: Y Combinator Blog, kind: rss, url: "https://www.ycombinator.com/blog/rss/", category: B}
+  - {name: Stratechery, kind: rss, url: "https://stratechery.com/feed/", category: B}
+  - {name: Lenny's Newsletter, kind: rss, url: "https://www.lennysnewsletter.com/feed", category: B}
+  - {name: Hacker News front page, kind: hn_algolia, url: "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=50", category: A}
+# Not included: anthropic.com has no /rss.xml (404 on 2026-11-17); track via Claude web search.

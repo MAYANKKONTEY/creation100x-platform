@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Test Feed</title>
+<item><title>Open-weight model tops coding benchmark</title>
+<link>https://example.com/news/model?utm_source=rss&amp;id=7</link>
+<description><![CDATA[<p>A new <b>open-weight</b> model &amp; its results.</p>]]></description>
+<pubDate>Mon, 16 Nov 2026 09:00:00 GMT</pubDate></item>
+<item><title>Same story, different tracking</title>
+<link>https://www.example.com/news/model/?id=7&amp;utm_medium=email#top</link>
+<pubDate>Mon, 16 Nov 2026 10:00:00 GMT</pubDate></item>
+<item><title>SaaS pricing shifts to usage-based</title>
+<link>https://example.com/saas-pricing</link>
+<description>Usage-based pricing analysis.</description></item>
+<item><title></title><link>https://example.com/no-title</link></item>
+</channel></rss>
