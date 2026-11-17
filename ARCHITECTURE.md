@@ -55,7 +55,7 @@ A single-user content operating system for one LinkedIn personal profile. It fin
 | `scoring/` | Configurable weighted scoring models loaded from `config/scoring.yaml`. Deterministic freshness decay. | M1 |
 | `safety/` | Kill switch (env and DB flags), publishing guard. | M1 |
 | `jobs.py` | `JobRun` audit trail for every background operation. | M1 |
-| `intelligence/` | Trend radar, business-problem radar, startup-opportunity and controversy analysis. | M2–M3 |
+| `intelligence/` | Triage, story clustering, per-opportunity analysis, pillar-balanced selection, swipe-file pattern analysis, daily pipeline (M2). Business problems, startup opportunities, controversy (M3). | M2–M3 |
 | `writing/` | Hooks (≥10, scored), three post variants, brand-voice validation. | M4 |
 | `visuals/` | Visual concepts, OpenAI image generation, HTML/CSS → PNG/PDF rendering, visual QA. | M5 |
 | `seo/` | Keyword extraction, post SEO report, profile recommendations, ranking-awareness checklist. | M6 |
@@ -93,8 +93,10 @@ Implemented in M1 (✓) or planned (milestone noted).
 | Entity | Key fields | |
 |---|---|---|
 | `Source` | name, kind (`rss`/`hn_algolia`/…), url, category, enabled, last_fetched_at, last_error | ✓ |
-| `RawItem` | source_id, url, url_hash (unique), title, summary, published_at, fetched_at, category, signals (JSON, source-provided only) | ✓ |
-| `Opportunity` | raw_item_id?, title, category, status, sub_scores, score_total, score_breakdown, scoring_version, why_it_matters, angles (JSON) | ✓ (angles filled M2–M3) |
+| `RawItem` | source_id, url, url_hash (unique), title, summary, published_at, fetched_at, category, signals (JSON, source-provided only), triage_status, triage (JSON), story_id | ✓ |
+| `Story` | key (unique), title, category, pillar, first/last seen, latest_published_at | ✓ M2 |
+| `SwipePost` | pasted public post text, optional author/url/date, owner-reported metrics, analysis status, pattern analysis | ✓ M2 |
+| `Opportunity` | story_id (unique), raw_item_id?, title, category, pillar, status, sub_scores, score_total, score_breakdown, scoring_version, signals (coverage), analysis (JSON) | ✓ |
 | `ResearchBrief` | opportunity_id?, topic, summary, status, model, created_at | ✓ |
 | `Evidence` | brief_id, url, title, publisher, page_age, cited_text, retrieved_at | ✓ |
 | `Claim` | brief_id, text, claim_type (fact/statistic/opinion/estimate), source_urls, status (`verified`/`sourced`/`unsupported`) | ✓ |
@@ -126,7 +128,27 @@ Implemented in M1 (✓) or planned (milestone noted).
 8. **Publish**: kill switch checked → media uploaded → post created → read back to verify → URN and URL stored.
 9. **Learn**: metrics collected at +2h, +24h, +72h, +7d where the API allows; experiments updated; recommendation weights adjusted with guardrails.
 
-### 5.2 Research (M1, implemented)
+### 5.2 Triage and clustering (M2, implemented)
+
+```
+pending RawItems ──▶ stale filter (>96h → stale, never sent)
+        │
+        ▼ batches of 15, effort=low
+Claude: category, pillar, story_key, 5 sub-scores + reasons   (recent story keys shown for reuse)
+        │
+        ▼ code validation: known item ids, known pillar, 0–10 ranges, dedupe ids; omitted ×3 → error
+relevant? ──no──▶ irrelevant
+   │yes
+   ▼
+story = same key in window  OR  title Jaccard ≥ 0.6  OR  new story
+   ▼
+one Opportunity per story: element-wise max sub-scores, freshness from newest item,
+coverage = items + distinct sources (counted, not guessed)
+   ▼
+pillar-balanced top N (max 2 per pillar) ──▶ analysis (basis: headlines, verified: false)
+```
+
+### 5.3 Research (M1, implemented)
 
 ```
 topic ──▶ Claude + web_search (server tool)
@@ -146,7 +168,7 @@ topic ──▶ Claude + web_search (server tool)
 
 Sources come from tool-result blocks, not from model prose, so the model cannot invent a URL that ends up marked as verified.
 
-### 5.3 Publishing safety
+### 5.4 Publishing safety
 
 ```
 can_publish() = env PUBLISHING_ENABLED == true
@@ -172,7 +194,8 @@ can_publish() = env PUBLISHING_ENABLED == true
 | LinkedIn post analytics for a personal profile | **Uncertain (M8)** | Member-level post analytics through the API may need restricted product access. Fallback: import LinkedIn's own analytics export (CSV/XLSX) through the dashboard. Missing metrics are stored as `null`, never estimated. |
 | LinkedIn articles / newsletters via API | **Likely unsupported** | To be confirmed in M7. Plan: generate the article plus its SEO package for manual publishing, and share the link via the API. |
 | Public viral LinkedIn posts | **No permitted bulk API** | Inputs: (a) posts the owner pastes into a swipe file, (b) public posts surfaced by Claude web search, (c) licensed third-party datasets if added later. No logged-in scraping. |
-| Reddit, Product Hunt, GitHub, X | **Optional (M2)** | Each needs its own API credentials and terms review. GitHub search API is the cheapest to add. |
+| GitHub search API | **Implemented M2** | Official search API (no official "trending" endpoint). Optional `GITHUB_TOKEN` for higher rate limits. Clone-network filter, because stars are heavily farmed. |
+| Reddit, Product Hunt, X | **Optional (later)** | Each needs its own API credentials and terms review. |
 | Hosting (runs with the laptop closed) | **Missing (M9)** | Docker images for API, worker, and frontend, managed PostgreSQL, daily `pg_dump` to object storage. |
 
 ## 7. Technology decisions and trade-offs

@@ -19,7 +19,7 @@ class ORM(BaseModel):
 
 class SourceIn(BaseModel):
     name: str = Field(min_length=1, max_length=200)
-    kind: Literal["rss", "hn_algolia"]
+    kind: Literal["rss", "hn_algolia", "github_search"]
     url: HttpUrl
     category: Literal["A", "B", "C", "D", "E"] = "A"
     enabled: bool = True
@@ -54,6 +54,9 @@ class RawItemOut(ORM):
     fetched_at: UTCDateTime
     category: str
     signals: dict
+    triage_status: str
+    triage: dict
+    story_id: int | None
 
 
 class OpportunityIn(BaseModel):
@@ -76,13 +79,71 @@ class SubScoresIn(BaseModel):
 class OpportunityOut(ORM):
     id: int
     raw_item_id: int | None
+    story_id: int | None
     title: str
     category: str
+    pillar: str | None
     status: str
     sub_scores: dict
     score_total: float | None
     score_breakdown: dict
     scoring_version: str | None
+    signals: dict
+    analysis: dict
+    created_at: UTCDateTime
+
+
+class StoryOut(ORM):
+    id: int
+    key: str
+    title: str
+    category: str
+    pillar: str | None
+    first_seen_at: UTCDateTime
+    last_seen_at: UTCDateTime
+    latest_published_at: UTCDateTime | None
+
+
+class RadarEntry(BaseModel):
+    story: StoryOut
+    opportunity: OpportunityOut | None
+    coverage: dict
+
+
+class StoryDetail(BaseModel):
+    story: StoryOut
+    opportunity: OpportunityOut | None
+    items: list[RawItemOut]
+
+
+class TriageRunIn(BaseModel):
+    max_items: int | None = Field(default=None, ge=1, le=1000)
+
+
+class PipelineRunIn(BaseModel):
+    discover: bool = True
+
+
+class SwipePostIn(BaseModel):
+    text: str = Field(min_length=40, max_length=10000)
+    author_name: str | None = Field(default=None, max_length=200)
+    url: HttpUrl | None = None
+    posted_at: datetime | None = None
+    owner_note: str | None = Field(default=None, max_length=2000)
+    owner_reported_metrics: dict[str, int] = Field(
+        default_factory=dict, description="Only numbers you saw on LinkedIn, e.g. {'reactions': 1200}"
+    )
+
+
+class SwipePostOut(ORM):
+    id: int
+    text: str
+    author_name: str | None
+    url: str | None
+    posted_at: UTCDateTime | None
+    owner_note: str | None
+    owner_reported_metrics: dict
+    analysis_status: str
     analysis: dict
     created_at: UTCDateTime
 

@@ -28,8 +28,9 @@ class FakeLLM:
         if self.on_usage:
             self.on_usage(Usage(purpose=purpose, model=self.model, input_tokens=10, output_tokens=5, stop_reason="end_turn"))
 
-    def parse(self, *, purpose: str, system: str, prompt: str, schema: type[T], max_tokens: int = 16000) -> T:
-        self.calls.append({"kind": "parse", "purpose": purpose, "system": system, "prompt": prompt})
+    def parse(self, *, purpose: str, system: str, prompt: str, schema: type[T], max_tokens: int = 16000,
+              effort: str | None = None) -> T:
+        self.calls.append({"kind": "parse", "purpose": purpose, "system": system, "prompt": prompt, "effort": effort})
         queue = self._parse[schema.__name__]
         if not queue:
             raise AssertionError(f"FakeLLM: no queued response for {schema.__name__}")

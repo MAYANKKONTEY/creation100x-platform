@@ -32,13 +32,20 @@ Legend: `[x]` done and tested · `[ ]` open · `[~]` partial · ⚠ needs owner 
 - [ ] PostgreSQL run (code is dialect-neutral; untested against a real Postgres instance)
 
 ## M2 — Viral discovery, AI trend radar, business intelligence
-- [ ] Triage stage: batch Claude classification → sub-scores → Opportunity rows
-- [ ] Story clustering / near-duplicate merge
-- [ ] GitHub search connector (trending repos)
-- [ ] Swipe-file endpoint for public LinkedIn posts the owner pastes in + pattern extraction
-- [ ] Per-opportunity analysis (why it matters, angles, business implication, visual direction)
-- [ ] Trend radar and business intelligence endpoints with filters
-- [ ] Scheduled discovery (interim cron via CLI until M7 scheduler)
+- [x] Triage stage: batched Claude classification (category, pillar, story key, 5 sub-scores + reasons) with code validation of ids, pillars and ranges
+- [x] Stale filter (older than 96h never sent to Claude) and per-run item cap for cost control
+- [x] Story clustering: Claude story keys (shown recent keys to reuse) + title-similarity backstop; one Opportunity per story
+- [x] Real coverage signals per opportunity (items, distinct sources, max HN points / GitHub stars)
+- [x] GitHub search connector (official API; "new repos by stars", not "trending"), optional `GITHUB_TOKEN`
+- [x] GitHub clone-network filter: name/description shared by ≥3 owners dropped, 2 owners flagged
+- [x] Swipe file for pasted public LinkedIn posts + pattern extraction with a 6-word copy guard
+- [x] Per-opportunity analysis (why it matters, angles, business implication, visual direction, research questions, sensitivity → review)
+- [x] Pillar-balanced selection of the top opportunities
+- [x] Trend radar, business radar, story detail, pattern summary endpoints
+- [x] `python -m app.cli pipeline` (discover → triage → select → analyse), cron-friendly until the M7 scheduler
+- [x] 90 tests passing
+- [ ] Live triage/analysis run against Claude (blocked on API key)
+- [ ] Tune `min_audience_relevance` and triage effort on real output
 
 ## M3 — Business problems, startup opportunities, controversy
 - [ ] Business problem extraction + radar endpoint
@@ -79,3 +86,11 @@ Legend: `[x]` done and tested · `[ ]` open · `[~]` partial · ⚠ needs owner 
 - A number written differently ("76%" vs "76 percent") downgrades a claim to `sourced`. Conservative by design.
 - Discovery runs synchronously inside the API request; it moves to the worker in M7.
 - No dashboard authentication yet (M9). Do not expose the API publicly.
+
+## Known limitations (M2)
+- Opportunity analysis uses headlines and summaries only. It is stored as `verified: false` until research runs.
+- Story merging can miss two very differently worded headlines if Claude gives them different keys. It can also wrongly merge two different stories whose titles share most words (threshold 0.6, configurable).
+- Opportunity sub-scores are the element-wise maximum across a story's items. More coverage can raise a score but never lower it.
+- GitHub topic search is heavily polluted by star-farmed clones (94 of the top 100 new `llm` repos on 2026-11-17). The filter removes networks of 3+ owners, but a farm using unique names would get through.
+- Schema changed (stories, triage fields, swipe posts). With no migrations until M9, delete `data/growthos.db` when upgrading a dev database.
+- The end-to-end analysis cost per run is unmeasured until a live run. Estimate: about 10 triage batches (low effort) plus 5 analyses (medium effort) per day.

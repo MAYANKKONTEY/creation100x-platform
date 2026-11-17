@@ -11,7 +11,7 @@ An AI content intelligence and distribution system for one LinkedIn personal pro
 
 It is not an engagement bot. No pods, fake engagement, automated comments, or scraping behind logins.
 
-**Status:** Milestone 1 of 9 complete (foundation, database, discovery, research, Claude integration). See `TASKS.md`.
+**Status:** Milestones 1–2 of 9 complete (foundation, discovery, research, triage, story clustering, opportunity analysis, swipe file). See `TASKS.md`.
 
 | Doc | What's in it |
 |---|---|
@@ -48,6 +48,12 @@ cd backend && ../.venv/bin/python -m app.cli discover
 cd backend && ../.venv/bin/python -m app.cli research "AI coding agents and junior developer hiring"
 ```
 
+Run the daily intelligence pipeline (discover → triage → select → analyse). This needs the API key, and you can schedule it with cron until Milestone 7:
+
+```bash
+cd backend && ../.venv/bin/python -m app.cli pipeline
+```
+
 ```bash
 cd backend && ../.venv/bin/uvicorn app.main:app --reload
 ```
@@ -62,7 +68,7 @@ cd backend && ../.venv/bin/python -m pytest -q
 
 Tests need no network and no API keys. HTTP uses `httpx.MockTransport`, and the Claude SDK is replaced by a fake.
 
-### Key API endpoints (M1)
+### Key API endpoints
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -76,6 +82,11 @@ Tests need no network and no API keys. HTTP uses `httpx.MockTransport`, and the 
 | GET/POST | `/api/safety`, `/api/safety/emergency-stop`, `/api/safety/enable-publishing` | Kill switch |
 | POST/GET | `/api/brand-voice/samples` | Writing samples |
 | GET | `/api/jobs`, `/api/llm-calls`, `/api/skills` | Logs and skills library |
+| POST | `/api/triage/run`, `/api/pipeline/run` | Triage new items; full daily pipeline |
+| POST | `/api/opportunities/{id}/analyze` | Angle analysis for one opportunity |
+| GET | `/api/radar/trends`, `/api/radar/business`, `/api/stories/{id}` | AI trend radar, business radar, story detail with coverage |
+| POST/GET | `/api/swipe-file`, `/api/swipe-file/{id}/analyze`, `/api/patterns` | Paste public LinkedIn posts, extract patterns |
+| GET | `/api/pipeline/config` | Audience, pillars, triage/selection settings |
 
 ### Safety defaults
 - Publishing needs **both** `PUBLISHING_ENABLED=true` in env **and** the DB flag, which is set with the exact phrase `ENABLE PUBLISHING`. Both are off by default.
@@ -85,8 +96,8 @@ Tests need no network and no API keys. HTTP uses `httpx.MockTransport`, and the 
 ### Layout
 ```
 .claude/skills/        13 skills (Claude Code + runtime prompt modules)
-backend/app/           FastAPI app: config, db, models, llm, skills, discovery, research, scoring, safety, api
+backend/app/           FastAPI app: config, db, models, llm, skills, discovery, intelligence, research, scoring, safety, api
 backend/tests/         pytest suite
-config/                sources.yaml, scoring.yaml, pricing.yaml
+config/                sources.yaml, scoring.yaml, pipeline.yaml, pricing.yaml
 brand/                 voice-profile.md
 ```

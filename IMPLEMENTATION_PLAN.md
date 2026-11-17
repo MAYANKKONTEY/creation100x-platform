@@ -2,7 +2,7 @@
 
 Each milestone ships working, tested code and ends with a report of actual test results and unfinished work. A milestone does not start until the previous one is reviewed.
 
-## M1 — Foundation, database, research, Claude integration ✅ (this delivery)
+## M1 — Foundation, database, research, Claude integration ✅
 
 **Goal:** a running FastAPI backend that can ingest real sources, store them, research a topic with verifiable sources, and score opportunities with a configurable model.
 
@@ -20,7 +20,7 @@ Each milestone ships working, tested code and ends with a report of actual test 
 | CLI | `seed-sources`, `discover`, `research "<topic>"`. |
 | Tests | Unit and API tests with fakes. No network or API key needed. |
 
-## M2 — Viral discovery, AI trend radar, business intelligence
+## M2 — Viral discovery, AI trend radar, business intelligence ✅
 
 - More connectors: GitHub search API (trending repos by stars/day), Product Hunt (if token provided), more vetted feeds. A "swipe file" endpoint for pasting public LinkedIn posts.
 - **Triage stage:** Claude batch-classifies new items into categories A–E and sub-scores (audience relevance, business importance, discussion potential, virality hypothesis, evidence quality). Freshness is computed. Opportunity rows are created with score breakdowns.

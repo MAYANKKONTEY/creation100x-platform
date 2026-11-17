@@ -23,6 +23,7 @@ class IngestStats:
     sources_failed: int = 0
     items_seen: int = 0
     items_new: int = 0
+    items_skipped: int = 0  # dropped by a connector's quality filter (e.g. GitHub clone networks)
     errors: dict[str, str] = field(default_factory=dict)
 
     def as_dict(self) -> dict:
@@ -77,6 +78,7 @@ def ingest(session: Session, connectors: dict[str, object], source_ids: list[int
 
         stats.sources_ok += 1
         stats.items_seen += len(found)
+        stats.items_skipped += getattr(connector, "last_skipped", 0)
         hashes = {url_hash(i.url): i for i in found}
         known = set(session.scalars(select(RawItem.url_hash).where(RawItem.url_hash.in_(list(hashes)))))
         for h, item in hashes.items():

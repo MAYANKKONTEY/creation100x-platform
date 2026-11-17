@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     claude_server_fallback: bool = True
 
     openai_api_key: SecretStr | None = None
+    # Optional. Raises GitHub search API rate limits (unauthenticated search is heavily limited).
+    github_token: SecretStr | None = None
 
     # Publishing requires BOTH this env flag and the DB setting to be true.
     publishing_enabled: bool = False

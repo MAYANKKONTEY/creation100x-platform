@@ -17,4 +17,9 @@ sources:
   - {name: Stratechery, kind: rss, url: "https://stratechery.com/feed/", category: B}
   - {name: Lenny's Newsletter, kind: rss, url: "https://www.lennysnewsletter.com/feed", category: B}
   - {name: Hacker News front page, kind: hn_algolia, url: "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=50", category: A}
+  # GitHub has no official "trending" API. These use the official search API: repositories
+  # created in the last N days ({since:N} is replaced with that date) on a topic, sorted by stars.
+  # Star counts are stored as source signals. Search API checked HTTP 200 on 2026-11-17.
+  - {name: GitHub new LLM repos, kind: github_search, url: "https://api.github.com/search/repositories?q=topic:llm+created:>{since:7}&sort=stars&order=desc&per_page=100", category: A, max_items: 100}
+  - {name: GitHub new AI agent repos, kind: github_search, url: "https://api.github.com/search/repositories?q=topic:ai-agents+created:>{since:7}&sort=stars&order=desc&per_page=100", category: A, max_items: 100}
 # Not included: anthropic.com has no /rss.xml (404 on 2026-11-17); track via Claude web search.

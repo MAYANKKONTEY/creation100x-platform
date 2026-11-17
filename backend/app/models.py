@@ -25,6 +25,14 @@ class ClaimStatus(StrEnum):
     UNSUPPORTED = "unsupported"
 
 
+class TriageStatus(StrEnum):
+    PENDING = "pending"
+    RELEVANT = "relevant"
+    IRRELEVANT = "irrelevant"
+    STALE = "stale"
+    ERROR = "error"
+
+
 class JobStatus(StrEnum):
     RUNNING = "running"
     SUCCEEDED = "succeeded"
@@ -63,8 +71,31 @@ class RawItem(Base):
     category: Mapped[str] = mapped_column(String(2))
     # Only metrics the source itself provides (e.g. HN points). Never estimated.
     signals: Mapped[dict] = mapped_column(JSON, default=dict)
+    triage_status: Mapped[str] = mapped_column(String(20), default=TriageStatus.PENDING, index=True)
+    triaged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # {category, pillar, sub_scores, reasons, story_key, model} from the triage stage
+    triage: Mapped[dict] = mapped_column(JSON, default=dict)
+    story_id: Mapped[int | None] = mapped_column(ForeignKey("stories.id", ondelete="SET NULL"), index=True)
 
     source: Mapped[Source] = relationship(back_populates="items")
+    story: Mapped[Story | None] = relationship(back_populates="items")
+
+
+class Story(Base):
+    """One real-world story, possibly covered by several items from different sources."""
+
+    __tablename__ = "stories"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    key: Mapped[str] = mapped_column(String(120), unique=True, index=True)
+    title: Mapped[str] = mapped_column(Text)
+    category: Mapped[str] = mapped_column(String(2))
+    pillar: Mapped[str | None] = mapped_column(String(40), index=True)
+    first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    latest_published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    items: Mapped[list[RawItem]] = relationship(back_populates="story")
 
 
 class Opportunity(Base):
@@ -72,13 +103,18 @@ class Opportunity(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     raw_item_id: Mapped[int | None] = mapped_column(ForeignKey("raw_items.id", ondelete="SET NULL"))
+    story_id: Mapped[int | None] = mapped_column(ForeignKey("stories.id", ondelete="SET NULL"), unique=True)
     title: Mapped[str] = mapped_column(Text)
     category: Mapped[str] = mapped_column(String(2))
+    pillar: Mapped[str | None] = mapped_column(String(40), index=True)
+    # new -> scored -> analyzed | needs_review -> researched ...
     status: Mapped[str] = mapped_column(String(30), default="new")
     sub_scores: Mapped[dict] = mapped_column(JSON, default=dict)
     score_total: Mapped[float | None] = mapped_column(Float, index=True)
     score_breakdown: Mapped[dict] = mapped_column(JSON, default=dict)
     scoring_version: Mapped[str | None] = mapped_column(String(40))
+    # Real, countable signals only: coverage (items, distinct sources) and source-provided metrics.
+    signals: Mapped[dict] = mapped_column(JSON, default=dict)
     analysis: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
@@ -135,6 +171,24 @@ class WritingSample(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(Text)
     source: Mapped[str | None] = mapped_column(String(200))  # e.g. "linkedin post 2026-05"
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class SwipePost(Base):
+    """A public LinkedIn post the owner pasted in for pattern analysis (no scraping)."""
+
+    __tablename__ = "swipe_posts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    text: Mapped[str] = mapped_column(Text)
+    author_name: Mapped[str | None] = mapped_column(String(200))
+    url: Mapped[str | None] = mapped_column(Text)
+    posted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    owner_note: Mapped[str | None] = mapped_column(Text)
+    # Numbers the owner typed in from what LinkedIn showed. Labelled owner-reported; never estimated.
+    owner_reported_metrics: Mapped[dict] = mapped_column(JSON, default=dict)
+    analysis_status: Mapped[str] = mapped_column(String(30), default="pending")
+    analysis: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

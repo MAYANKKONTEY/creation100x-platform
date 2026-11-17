@@ -79,6 +79,7 @@ class LLMClient(Protocol):
         prompt: str,
         schema: type[T],
         max_tokens: int = 16000,
+        effort: str | None = None,
     ) -> T: ...
 
     def web_research(

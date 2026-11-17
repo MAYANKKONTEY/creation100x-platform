@@ -54,11 +54,11 @@ class ClaudeClient:
         self.on_usage = on_usage
 
     # ---------------------------------------------------------------- helpers
-    def _common_kwargs(self) -> dict[str, Any]:
+    def _common_kwargs(self, effort: str | None = None) -> dict[str, Any]:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "thinking": {"type": "adaptive"},
-            "output_config": {"effort": self.effort},
+            "output_config": {"effort": effort or self.effort},
         }
         if self.server_fallback:
             kwargs["betas"] = [FALLBACK_BETA]
@@ -105,7 +105,9 @@ class ClaudeClient:
         return response
 
     # ---------------------------------------------------------------- public
-    def parse(self, *, purpose: str, system: str, prompt: str, schema: type[T], max_tokens: int = 16000) -> T:
+    def parse(
+        self, *, purpose: str, system: str, prompt: str, schema: type[T], max_tokens: int = 16000, effort: str | None = None
+    ) -> T:
         response = self._call(
             self.sdk.beta.messages.parse,
             purpose,
@@ -113,7 +115,7 @@ class ClaudeClient:
             system=system,
             messages=[{"role": "user", "content": prompt}],
             output_format=schema,
-            **self._common_kwargs(),
+            **self._common_kwargs(effort),
         )
         self._check_stop(response)
         parsed = _get(response, "parsed_output")
