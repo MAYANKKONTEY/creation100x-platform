@@ -1,0 +1,24 @@
+[project]
+name = "linkedin-growth-os"
+version = "0.1.0"
+description = "AI content intelligence and distribution system for a LinkedIn personal profile"
+requires-python = ">=3.11"
+dependencies = [
+  "anthropic>=2.10,<3",
+  "fastapi>=0.115,<0.116",
+  "uvicorn[standard]>=0.30",
+  "sqlalchemy>=2.0,<2.1",
+  "pydantic>=2.7,<3",
+  "pydantic-settings>=2.3,<3",
+  "httpx>=0.27,<0.29",
+  "feedparser>=6.0,<7",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+postgres = ["psycopg[binary]>=3.2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

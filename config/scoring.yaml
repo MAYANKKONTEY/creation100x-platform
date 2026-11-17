@@ -1,0 +1,36 @@
+# Heuristic scoring models. Scores rank candidates; they are NOT probabilities of reach or virality.
+# Weights in each model must sum to 1.0. Sub-scores are 0-10; totals are 0-100.
+# Bump `version` whenever weights change: every stored score records the version used.
+freshness:
+  half_life_hours: 48
+  unknown_date_score: 3.0
+models:
+  content_opportunity:
+    version: "2026-11-17.1"
+    weights:
+      audience_relevance: 0.20
+      freshness: 0.15
+      business_importance: 0.20
+      discussion_potential: 0.15
+      virality_hypothesis: 0.20
+      evidence_quality: 0.10
+  post_quality:
+    version: "2026-11-17.1"
+    auto_publish_min: 70
+    weights:
+      hook_quality: 0.20
+      information_value: 0.20
+      audience_relevance: 0.20
+      originality: 0.15
+      readability: 0.10
+      credibility: 0.15
+  visual_quality:
+    version: "2026-11-17.1"
+    auto_publish_min: 70
+    weights:
+      visual_hierarchy: 0.20
+      mobile_readability: 0.20
+      topic_relevance: 0.20
+      design_quality: 0.15
+      originality: 0.15
+      brand_consistency: 0.10

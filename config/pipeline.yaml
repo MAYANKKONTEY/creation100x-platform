@@ -1,0 +1,35 @@
+# Milestone 2 pipeline settings: triage, story clustering, selection and analysis.
+audience: >-
+  Software engineers, AI builders, technical founders and startup operators who want practical,
+  evidence-based insight on AI engineering, startups, marketing and business models.
+
+# Content pillars (from the owner brief). Triage assigns exactly one per item.
+pillars:
+  - ai_engineering
+  - llms_agents
+  - ai_tools_experiments
+  - software_development
+  - startup_building
+  - entrepreneurship
+  - marketing_distribution
+  - business_models
+  - creator_economy
+  - building_in_public
+
+triage:
+  batch_size: 15            # items per Claude call
+  max_items_per_run: 150    # cost cap per run
+  max_age_hours: 96         # older items are marked stale and never sent to Claude
+  effort: low               # classification works well at low effort; raise if quality drops
+  min_audience_relevance: 5 # below this an item is marked irrelevant
+
+clustering:
+  window_hours: 168           # stories older than this are not merged into
+  title_jaccard_threshold: 0.6
+
+selection:
+  top_n: 5
+  max_per_pillar: 2
+
+analysis:
+  effort: medium

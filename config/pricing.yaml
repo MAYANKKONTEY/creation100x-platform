@@ -1,0 +1,8 @@
+# USD per 1M tokens, Anthropic first-party API. Source: Claude API docs as cached 2026-11-03.
+# Used only for cost ESTIMATES in the System Logs page. Update when prices change.
+as_of: "2026-11-03"
+models:
+  claude-opus-5-5: {input: 4.00, output: 20.00}
+  claude-sonnet-5-5: {input: 2.00, output: 10.00}
+  claude-haiku-5-5: {input: 0.10, output: 0.50}
+  claude-fable-5-2: {input: 8.00, output: 40.00}
