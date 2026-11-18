@@ -1,0 +1,11 @@
+rank,product,category,demand_15,problem_15,content_15,supplier_15,margin_20,differentiation_10,risk_10,total_100,decision,key_reason,evidence_ids
+1,Silicone lick mat 2-pack bundle (textured duo + spatula + freeze guide),Pet,13,12,14,12,13,6,8,78,RECOMMENDED INITIAL,"Proven demand, ~150-250g, single-piece silicone (low defect surface), highly filmable; margin only works as bundle",P1 P2 P3 P4 P5
+2,Travel tech organizer pouch,Travel / personal organisation,12,11,11,13,14,5,8,74,TEST CANDIDATE,"Crowded but light, $15-60 anchors; zipper/loop-size complaints are a design opening",P8
+3,Magnetic gym/creator phone mount,Creator workspace / lifestyle,10,12,14,11,15,6,5,73,TEST CANDIDATE,"Best price headroom ($15-42 anchors); risks: magnet-hold complaints, phone/case compatibility returns, air-freight magnet rules",P9
+4,Dog paw cleaner cup,Pet,13,13,13,11,9,4,6,69,BACKLOG (line extension),Huge demand but bulky (dimensional weight) and MudBuster dominance; durability complaints,P6
+5,Snuffle mat (fleece),Pet,10,11,13,11,12,6,5,68,BACKLOG,Good content; ingestion risk if dog chews fabric strips; heavier than mat,P4
+6,No-drill clamp under-desk cable tray,Desk organisation,11,13,13,9,8,4,6,64,REJECT FOR LAUNCH,Metal tray weight ~0.6-1kg makes shipping expensive; adhesive versions fail per reviews,P10
+7,Compression packing cubes,Travel,13,10,10,11,9,3,6,62,REJECT,"Saturated, zipper failures most common complaint, 400-600g sets",P11
+8,Silicone leak-proof travel bottles,Travel,11,11,9,11,7,4,5,58,REJECT,Leak/crack complaints drive returns; low ticket,P12
+9,Magnetic cable clips / desk cable kit,Desk organisation,10,9,10,12,6,3,8,58,REJECT,Low ticket ($8-12) cannot absorb fees+shipping,P10
+10,Reusable pet hair remover roller,Pet,14,13,14,8,12,2,0,63,REJECT - IP RISK,ChomChom holds a utility patent and actively removes knockoffs; unacceptable legal risk regardless of score,P7

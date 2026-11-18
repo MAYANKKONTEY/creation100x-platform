@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+__pycache__/
+*.pyc
+node_modules/
+.shopify/
+.DS_Store
+research/evidence/private/
