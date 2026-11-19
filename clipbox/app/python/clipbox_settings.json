@@ -1,0 +1,11 @@
+{
+  "_help": "ClipBox settings. Keys starting with _ are ignored. CLIPBOX_* environment variables override these. See README.md.",
+  "audio_device": "auto",
+  "pre_roll": 20,
+  "post_roll": 10,
+  "beep_during_session": false,
+  "stop_requires_hold": true,
+  "sample_rate": 48000,
+  "channels": 1,
+  "data_dir": ""
+}
